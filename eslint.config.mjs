@@ -1,25 +1,52 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import js from '@eslint/js'
+import { defineConfig } from 'eslint/config'
+import prettierPlugin from 'eslint-plugin-prettier'
+import pluginReact from 'eslint-plugin-react'
+import simpleImportSort from 'eslint-plugin-simple-import-sort'
+import globals from 'globals'
+import tseslint from 'typescript-eslint'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+export default defineConfig([
   {
-    ignores: [
-      "node_modules/**",
-      ".next/**",
-      "out/**",
-      "build/**",
-      "next-env.d.ts",
-    ],
+    files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
+    plugins: {
+      js,
+      prettier: prettierPlugin,
+      'simple-import-sort': simpleImportSort,
+    },
+    extends: ['js/recommended'],
+    languageOptions: {
+      globals: globals.browser,
+    },
+    rules: {
+      quotes: ['error', 'single'],
+      semi: ['error', 'never'],
+      'max-len': [
+        'error',
+        {
+          code: 80,
+          ignoreStrings: true,
+          ignoreUrls: true,
+          ignoreComments: true,
+          ignoreTemplateLiterals: true,
+        },
+      ],
+      'simple-import-sort/imports': 'error',
+      'prettier/prettier': [
+        'error',
+        {
+          semi: false,
+          singleQuote: true,
+        },
+      ],
+    },
   },
-];
-
-export default eslintConfig;
+  tseslint.configs.recommended,
+  {
+    ...pluginReact.configs.flat.recommended,
+    rules: {
+      ...pluginReact.configs.flat.recommended.rules,
+      'react/react-in-jsx-scope': 'off',
+    },
+  },
+])
