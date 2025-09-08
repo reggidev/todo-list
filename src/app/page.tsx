@@ -1,3 +1,5 @@
+'use client'
+
 import {
   CheckIcon,
   CircleEllipsisIcon,
@@ -5,10 +7,12 @@ import {
   ListIcon,
   PlusIcon,
   SigmaIcon,
-  SquarePenIcon,
   TrashIcon,
 } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
+import { getTasks } from '@/actions/get-tasks'
+import EditTasks from '@/components/edit-task'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,17 +27,25 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
+import { Tasks } from '@/generated/prisma'
 
 const Home = () => {
+  const [taskList, setTaskList] = useState<Tasks[]>([])
+
+  const handleGetTasks = async () => {
+    const tasks = await getTasks()
+
+    if (!tasks) return
+
+    setTaskList(tasks)
+  }
+
+  useEffect(() => {
+    handleGetTasks()
+  }, [])
+
   return (
     <main className="flex h-screen w-full items-center justify-center bg-gray-100">
       <Card className="w-lg">
@@ -69,29 +81,19 @@ const Home = () => {
 
           {/* Tarefas */}
           <div className="mt-4 border-b-1">
-            <div className="flex h-14 items-center justify-between border-t-1">
-              <div className="h-full w-1 bg-green-300" />
-              <p className="flex-1 px-2 text-sm">Estudar React</p>
-              <div className="flex items-center gap-2">
-                <Dialog>
-                  <DialogTrigger>
-                    <SquarePenIcon className="h-5 w-5 cursor-pointer hover:stroke-zinc-500" />
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Editar tarefa</DialogTitle>
-                    </DialogHeader>
-
-                    <div className="flex gap-2">
-                      <Input placeholder="Editar tarefa" />
-                      <Button className="cursor-pointer">Editar</Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-
-                <TrashIcon className="h-5 w-5 cursor-pointer hover:stroke-zinc-500" />
+            {taskList.map((task) => (
+              <div
+                key={task.id}
+                className="flex h-14 items-center justify-between border-t-1"
+              >
+                <div className="h-full w-1 bg-green-300" />
+                <p className="flex-1 px-2 text-sm">{task.task}</p>
+                <div className="flex items-center gap-2">
+                  <EditTasks />
+                  <TrashIcon className="h-5 w-5 cursor-pointer hover:stroke-zinc-500" />
+                </div>
               </div>
-            </div>
+            ))}
           </div>
 
           <div className="mt-4 flex justify-between">
