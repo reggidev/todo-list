@@ -16,7 +16,7 @@ import { NewTask } from '@/actions/add-tasks'
 import { deleteTask } from '@/actions/delete-task'
 import { getTasks } from '@/actions/get-tasks'
 import { updateTaskStatus } from '@/actions/toggle-done'
-import EditTasks from '@/components/edit-task'
+import EditTask from '@/components/edit-task'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -96,7 +96,6 @@ const Home = () => {
           }
         })
         return updatedTaskList
-        /* setTaskList(updatedTaskList) */
       })
 
       await updateTaskStatus(id)
@@ -164,7 +163,7 @@ const Home = () => {
                   {task.task}
                 </p>
                 <div className="flex items-center gap-2">
-                  <EditTasks />
+                  <EditTask task={task} handleGetTasks={handleGetTasks} />
                   <TrashIcon
                     className="h-5 w-5 cursor-pointer hover:stroke-zinc-500"
                     onClick={() => handleDeleteTask(task.id)}
