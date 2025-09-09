@@ -10,7 +10,10 @@ import {
   TrashIcon,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
+import { NewTask } from '@/actions/add-tasks'
+import { deleteTask } from '@/actions/delete-task'
 import { getTasks } from '@/actions/get-tasks'
 import EditTasks from '@/components/edit-task'
 import {
@@ -33,13 +36,47 @@ import { Tasks } from '@/generated/prisma'
 
 const Home = () => {
   const [taskList, setTaskList] = useState<Tasks[]>([])
+  const [task, setTask] = useState<string>('')
 
   const handleGetTasks = async () => {
     const tasks = await getTasks()
-
     if (!tasks) return
-
     setTaskList(tasks)
+  }
+
+  const handleAddTask = async () => {
+    try {
+      if (task.length === 0 || !task) {
+        toast.warning('Digite uma tarefa válida.')
+        return
+      }
+
+      const myNewTask = await NewTask(task)
+
+      if (!myNewTask) return
+
+      setTask('')
+
+      toast.success('Tarefa adicionada com sucesso!')
+
+      await handleGetTasks()
+    } catch (error) {
+      toast.error('Erro ao adicionar tarefa, tente novamente.' + error)
+    }
+  }
+
+  const handleDeleteTask = async (id: string) => {
+    try {
+      if (!id) return
+      const deletedTask = await deleteTask(id)
+
+      if (!deletedTask) return
+
+      await handleGetTasks()
+      toast.warning('Tarefa deletada com sucesso!')
+    } catch (error) {
+      toast.error('Erro ao deletar tarefa, tente novamente.' + error)
+    }
   }
 
   useEffect(() => {
@@ -51,8 +88,12 @@ const Home = () => {
       <Card className="w-lg">
         {/* Header */}
         <CardHeader className="flex gap-2">
-          <Input placeholder="Adicionar tarefa" />
-          <Button className="cursor-pointer">
+          <Input
+            placeholder="Adicionar tarefa"
+            onChange={(e) => setTask(e.target.value)}
+            value={task}
+          />
+          <Button className="cursor-pointer" onClick={handleAddTask}>
             <PlusIcon />
             Cadastrar
           </Button>
@@ -90,7 +131,10 @@ const Home = () => {
                 <p className="flex-1 px-2 text-sm">{task.task}</p>
                 <div className="flex items-center gap-2">
                   <EditTasks />
-                  <TrashIcon className="h-5 w-5 cursor-pointer hover:stroke-zinc-500" />
+                  <TrashIcon
+                    className="h-5 w-5 cursor-pointer hover:stroke-zinc-500"
+                    onClick={() => handleDeleteTask(task.id)}
+                  />
                 </div>
               </div>
             ))}
