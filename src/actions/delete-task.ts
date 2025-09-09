@@ -16,6 +16,6 @@ export const deleteTask = async (id: string) => {
 
     return deletedTask
   } catch (error) {
-    console.log(error)
+    console.log('Error deleting task:', error)
   }
 }

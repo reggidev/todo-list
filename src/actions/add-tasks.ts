@@ -17,6 +17,6 @@ export const NewTask = async (task: string) => {
 
     return newTask
   } catch (error) {
-    console.log(error)
+    console.log('Error adding new task:', error)
   }
 }

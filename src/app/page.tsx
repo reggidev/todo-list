@@ -15,6 +15,7 @@ import { toast } from 'sonner'
 import { NewTask } from '@/actions/add-tasks'
 import { deleteTask } from '@/actions/delete-task'
 import { getTasks } from '@/actions/get-tasks'
+import { updateTaskStatus } from '@/actions/toggle-done'
 import EditTasks from '@/components/edit-task'
 import {
   AlertDialog,
@@ -79,6 +80,32 @@ const Home = () => {
     }
   }
 
+  const handleToggleTask = async (id: string) => {
+    const previousTasks = [...taskList]
+
+    try {
+      setTaskList((prev) => {
+        const updatedTaskList = prev.map((task) => {
+          if (task.id === id) {
+            return {
+              ...task,
+              done: !task.done,
+            }
+          } else {
+            return task
+          }
+        })
+        return updatedTaskList
+        /* setTaskList(updatedTaskList) */
+      })
+
+      await updateTaskStatus(id)
+    } catch (error) {
+      setTaskList(previousTasks)
+      toast.error('Erro ao atualizar tarefa, tente novamente.' + error)
+    }
+  }
+
   useEffect(() => {
     handleGetTasks()
   }, [])
@@ -127,8 +154,15 @@ const Home = () => {
                 key={task.id}
                 className="flex h-14 items-center justify-between border-t-1"
               >
-                <div className="h-full w-1 bg-green-300" />
-                <p className="flex-1 px-2 text-sm">{task.task}</p>
+                <div
+                  className={`h-full w-1 ${task.done ? 'bg-green-300' : 'bg-red-400'}`}
+                />
+                <p
+                  className="flex-1 cursor-pointer px-2 text-sm hover:text-gray-700"
+                  onClick={() => handleToggleTask(task.id)}
+                >
+                  {task.task}
+                </p>
                 <div className="flex items-center gap-2">
                   <EditTasks />
                   <TrashIcon
