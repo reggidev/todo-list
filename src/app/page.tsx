@@ -1,10 +1,8 @@
 'use client'
 
 import {
-  CheckIcon,
-  CircleEllipsisIcon,
   ListCheckIcon,
-  ListIcon,
+  Loader2Icon,
   PlusIcon,
   SigmaIcon,
   TrashIcon,
@@ -17,6 +15,7 @@ import { deleteTask } from '@/actions/delete-task'
 import { getTasks } from '@/actions/get-tasks'
 import { updateTaskStatus } from '@/actions/toggle-done'
 import EditTask from '@/components/edit-task'
+import FilterTask, { FilterType } from '@/components/filter-task'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,7 +27,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -38,6 +36,9 @@ import { Tasks } from '@/generated/prisma'
 const Home = () => {
   const [taskList, setTaskList] = useState<Tasks[]>([])
   const [task, setTask] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
+  const [currentFilter, setCurrentFilter] = useState<FilterType>('all')
+  const [filteredTasks, setFilteredTasks] = useState<Tasks[]>([])
 
   const handleGetTasks = async () => {
     const tasks = await getTasks()
@@ -46,9 +47,11 @@ const Home = () => {
   }
 
   const handleAddTask = async () => {
+    setLoading(true)
     try {
       if (task.length === 0 || !task) {
-        toast.warning('Digite uma tarefa válida.')
+        toast.error('Insira uma tarefa.')
+        setLoading(false)
         return
       }
 
@@ -64,6 +67,7 @@ const Home = () => {
     } catch (error) {
       toast.error('Erro ao adicionar tarefa, tente novamente.' + error)
     }
+    setLoading(false)
   }
 
   const handleDeleteTask = async (id: string) => {
@@ -74,7 +78,7 @@ const Home = () => {
       if (!deletedTask) return
 
       await handleGetTasks()
-      toast.warning('Tarefa deletada com sucesso!')
+      toast.success('Tarefa deletada com sucesso!')
     } catch (error) {
       toast.error('Erro ao deletar tarefa, tente novamente.' + error)
     }
@@ -109,6 +113,24 @@ const Home = () => {
     handleGetTasks()
   }, [])
 
+  useEffect(() => {
+    switch (currentFilter) {
+      case 'all':
+        setFilteredTasks(taskList)
+        break
+      case 'pending': {
+        const pendingTasks = taskList.filter((task) => !task.done)
+        setFilteredTasks(pendingTasks)
+        break
+      }
+      case 'completed': {
+        const completedTasks = taskList.filter((task) => task.done)
+        setFilteredTasks(completedTasks)
+        break
+      }
+    }
+  }, [currentFilter, taskList])
+
   return (
     <main className="flex h-screen w-full items-center justify-center bg-gray-100">
       <Card className="w-lg">
@@ -120,7 +142,7 @@ const Home = () => {
             value={task}
           />
           <Button className="cursor-pointer" onClick={handleAddTask}>
-            <PlusIcon />
+            {loading ? <Loader2Icon className="animate-spin" /> : <PlusIcon />}
             Cadastrar
           </Button>
         </CardHeader>
@@ -129,26 +151,20 @@ const Home = () => {
           <Separator className="mb-4" />
 
           {/* Filtros */}
-          <div className="flex gap-1">
-            <Badge className="cursor-pointer" variant="default">
-              <ListIcon />
-              Todas
-            </Badge>
-
-            <Badge className="cursor-pointer" variant="outline">
-              <CircleEllipsisIcon />
-              Não finalizadas
-            </Badge>
-
-            <Badge className="cursor-pointer" variant="outline">
-              <CheckIcon />
-              Concluidas
-            </Badge>
-          </div>
+          <FilterTask
+            currentFilter={currentFilter}
+            setCurrentFilter={setCurrentFilter}
+          />
 
           {/* Tarefas */}
           <div className="mt-4 border-b-1">
-            {taskList.map((task) => (
+            {taskList.length === 0 && (
+              <p className="border-t-1 py-2 text-sm">
+                Você não possui tarefas cadastradas.
+              </p>
+            )}
+
+            {filteredTasks.map((task) => (
               <div
                 key={task.id}
                 className="flex h-14 items-center justify-between border-t-1"
