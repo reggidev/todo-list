@@ -40,6 +40,8 @@ const Home = () => {
   const [currentFilter, setCurrentFilter] = useState<FilterType>('all')
   const [filteredTasks, setFilteredTasks] = useState<Tasks[]>([])
 
+  const tasksDone = taskList.filter((task) => task.done).length
+
   const handleGetTasks = async () => {
     const tasks = await getTasks()
     if (!tasks) return
@@ -192,7 +194,9 @@ const Home = () => {
           <div className="mt-4 flex justify-between">
             <div className="flex items-center gap-1">
               <ListCheckIcon className="h-4 w-4" />
-              <p className="text-xs">Tarefas concluídas (3/3)</p>
+              <p className="text-xs">
+                Tarefas concluídas ({tasksDone}/{taskList.length})
+              </p>
             </div>
 
             <AlertDialog>
@@ -226,13 +230,13 @@ const Home = () => {
           <div className="mt-4 h-2 w-full rounded-md bg-gray-200">
             <div
               className="h-full rounded-md bg-blue-500"
-              style={{ width: '50%' }}
+              style={{ width: `${(tasksDone / taskList.length) * 100}%` }}
             />
           </div>
 
           <div className="mt-2 flex items-center justify-end gap-1">
             <SigmaIcon className="h-4 w-4" />
-            <p className="text-sm">3 tarefas no total</p>
+            <p className="text-sm">{taskList.length} tarefas no total</p>
           </div>
         </CardContent>
       </Card>
