@@ -12,6 +12,7 @@ import { updateTaskStatus } from '@/actions/toggle-done'
 import FilterTask, { FilterType } from '@/components/filter-task'
 import TaskStats from '@/components/task-stats'
 import TasksList from '@/components/tasks-list'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -122,31 +123,43 @@ const Home = () => {
   }, [currentFilter, taskList])
 
   return (
-    <main className="flex h-screen w-full items-center justify-center bg-gray-100">
+    <main className="flex h-screen w-full items-center justify-center">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+
       <Card className="w-lg">
-        <CardHeader className="flex gap-2">
-          <Input
-            placeholder="Adicionar tarefa"
-            onChange={(e) => setTask(e.target.value)}
-            value={task}
-          />
-          <Button
-            disabled={loading}
-            className="cursor-pointer gap-1"
-            onClick={handleAddTask}
+        <CardHeader>
+          <form
+            className="flex gap-2"
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleAddTask()
+            }}
           >
-            {loading ? (
-              <>
-                <Loader2Icon className="animate-spin" />
-                Salvando...
-              </>
-            ) : (
-              <>
-                <PlusIcon />
-                Adicionar
-              </>
-            )}
-          </Button>
+            <Input
+              placeholder="Adicionar tarefa"
+              onChange={(e) => setTask(e.target.value)}
+              value={task}
+            />
+            <Button
+              disabled={loading}
+              className="cursor-pointer gap-1"
+              onClick={handleAddTask}
+            >
+              {loading ? (
+                <>
+                  <Loader2Icon className="animate-spin" />
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  <PlusIcon />
+                  Adicionar
+                </>
+              )}
+            </Button>
+          </form>
         </CardHeader>
 
         <CardContent>
