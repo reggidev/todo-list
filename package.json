@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build --no-lint",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prepare": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.15.0",
