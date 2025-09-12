@@ -1,16 +1,16 @@
 'use server'
 
-import { prisma } from '@/utils/prisma'
+import { db } from '@/utils/prisma'
 
 export const clearCompletedTasks = async () => {
   try {
-    await prisma.tasks.deleteMany({
+    await db.tasks.deleteMany({
       where: {
         done: true,
       },
     })
 
-    const allTasks = await prisma.tasks.findMany()
+    const allTasks = await db.tasks.findMany()
 
     if (!allTasks) return
 

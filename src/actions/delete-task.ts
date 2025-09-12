@@ -1,12 +1,12 @@
 'use server'
 
-import { prisma } from '@/utils/prisma'
+import { db } from '@/utils/prisma'
 
 export const deleteTask = async (id: string) => {
   try {
     if (!id) return
 
-    const deletedTask = await prisma.tasks.delete({
+    const deletedTask = await db.tasks.delete({
       where: {
         id,
       },

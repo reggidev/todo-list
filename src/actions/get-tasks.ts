@@ -1,9 +1,9 @@
 'use server'
 
-import { prisma } from '@/utils/prisma'
+import { db } from '@/utils/prisma'
 
 export const getTasks = async () => {
-  const tasks = await prisma.tasks.findMany()
+  const tasks = await db.tasks.findMany()
 
   if (!tasks) return
 

@@ -1,12 +1,12 @@
 'use server'
 
-import { prisma } from '@/utils/prisma'
+import { db } from '@/utils/prisma'
 
 export const NewTask = async (task: string) => {
   try {
     if (!task) return
 
-    const newTask = await prisma.tasks.create({
+    const newTask = await db.tasks.create({
       data: {
         task,
         done: false,

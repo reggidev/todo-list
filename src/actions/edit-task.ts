@@ -1,6 +1,6 @@
 'use server'
 
-import { prisma } from '@/utils/prisma'
+import { db } from '@/utils/prisma'
 
 interface EditTaskProps {
   id: string
@@ -11,7 +11,7 @@ export const editTask = async ({ id, newTask }: EditTaskProps) => {
   try {
     if (!id || !newTask) return null
 
-    const editedTask = await prisma.tasks.update({
+    const editedTask = await db.tasks.update({
       where: {
         id,
       },

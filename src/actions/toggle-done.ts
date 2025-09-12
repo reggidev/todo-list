@@ -1,16 +1,16 @@
 'use server'
 
-import { prisma } from '@/utils/prisma'
+import { db } from '@/utils/prisma'
 
 export const updateTaskStatus = async (id: string) => {
   try {
-    const currentTask = await prisma.tasks.findUnique({
+    const currentTask = await db.tasks.findUnique({
       where: { id },
     })
 
     if (!currentTask) return
 
-    const updatedStatus = await prisma.tasks.update({
+    const updatedStatus = await db.tasks.update({
       where: { id },
       data: { done: !currentTask.done },
     })
