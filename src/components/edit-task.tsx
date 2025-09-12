@@ -7,6 +7,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -52,6 +53,9 @@ const EditTask = ({ task, handleGetTasks }: EditTaskProps) => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Editar tarefa</DialogTitle>
+          <DialogDescription className="sr-only">
+            Modifique a tarefa abaixo
+          </DialogDescription>
         </DialogHeader>
 
         <div className="flex gap-2">
