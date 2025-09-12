@@ -7,7 +7,7 @@
     "build": "next build --no-lint",
     "start": "next start",
     "lint": "eslint",
-    "prepare": "prisma generate"
+    "prepare": "prisma generate && prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/client": "^6.15.0",
