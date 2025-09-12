@@ -1,3 +1,4 @@
+import type { Tasks } from '@prisma/client'
 import { AlertCircleIcon, TrashIcon } from 'lucide-react'
 
 import {
@@ -11,7 +12,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Tasks } from '@/generated/prisma'
 
 import EditTask from './edit-task'
 import { ScrollArea } from './ui/scroll-area'

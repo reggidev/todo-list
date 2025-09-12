@@ -1,3 +1,4 @@
+import type { Tasks } from '@prisma/client'
 import { SquarePenIcon } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -12,7 +13,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Tasks } from '@/generated/prisma'
 
 import { Button } from './ui/button'
 import { Input } from './ui/input'

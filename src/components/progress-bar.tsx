@@ -1,4 +1,4 @@
-import { Tasks } from '@/generated/prisma'
+import type { Tasks } from '@prisma/client'
 
 interface ProgressBarProps {
   taskList: Tasks[]

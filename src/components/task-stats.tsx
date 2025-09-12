@@ -1,6 +1,5 @@
+import type { Tasks } from '@prisma/client'
 import { ListCheckIcon, SigmaIcon } from 'lucide-react'
-
-import { Tasks } from '@/generated/prisma'
 
 import ClearCompletedTaskDialog from './clear-completed-task-dialog'
 import ProgressBar from './progress-bar'
